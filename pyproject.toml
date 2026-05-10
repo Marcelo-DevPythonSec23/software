@@ -1,0 +1,31 @@
+[project]
+name = "forensic_cti"
+version = "0.1.0"
+description = "Plataforma inteligente de análise forense digital e CTI"
+authors = ["Plataforma Forense & CTI <na@empresa.com>"]
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "sqlalchemy",
+    "psycopg2-binary",
+    "elasticsearch>=8.0.0",
+    "scikit-learn",
+    "pandas",
+    "numpy",
+    "polars",
+    "python-dotenv",
+    "alembic",
+]
+
+[project.urls]
+"Homepage" = "https://example.com"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
