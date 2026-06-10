@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from forensic_cti.normalization import normalize_record
-from forensic_cti.schema import NormalizedEvent
+from forensic_cti.schema import NormalizedEvent, SeverityLevel
 
 
 def test_normalize_record_defaults():
@@ -10,6 +10,6 @@ def test_normalize_record_defaults():
 
     assert isinstance(normalized, NormalizedEvent)
     assert normalized.event_type == "test event"
-    assert normalized.severity == "low"
+    assert normalized.severity == SeverityLevel.low
     assert normalized.raw_source == "test"
     assert normalized.timestamp == datetime.fromisoformat("2026-05-10T12:00:00")

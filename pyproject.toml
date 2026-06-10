@@ -1,31 +1,55 @@
 [project]
-name = "forensic_cti"
-version = "0.1.0"
-description = "Plataforma inteligente de análise forense digital e CTI"
-authors = ["Plataforma Forense & CTI <na@empresa.com>"]
+name = "forensic-cti"
+version = "0.2.0"
+description = "Plataforma inteligente de análise forense digital e Cyber Threat Intelligence (CTI)"
+
+authors = [
+  { name = "Plataforma Forense & CTI", email = "devmarcelo309vg@gmail.com" }
+]
+
 readme = "README.md"
 requires-python = ">=3.11"
 
 dependencies = [
-    "fastapi",
-    "uvicorn[standard]",
-    "pydantic",
-    "sqlalchemy",
-    "psycopg2-binary",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.27",
+    "pydantic>=2.0",
+    "sqlalchemy>=2.0",
+    "psycopg2-binary>=2.9",
     "elasticsearch>=8.0.0",
-    "scikit-learn",
-    "pandas",
-    "numpy",
-    "polars",
-    "python-dotenv",
-    "alembic",
+    "scikit-learn>=1.3",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "polars>=0.19",
+    "python-dotenv>=1.0",
+    "alembic>=1.12",
 ]
 
 [project.urls]
-"Homepage" = "https://example.com"
+Homepage = "https://marcelo-devpythonsec23.github.io/"
+Repository = "https://github.com/marcelo-devpythonsec23/forensic-cti"
+Documentation = "https://marcelo-devpythonsec23.github.io/"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "httpx2",
+    "black",
+    "ruff",
+    "mypy"
+]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "software/source"}
+
+[tool.setuptools.packages.find]
+where = ["software/source"]
+
+[tool.pytest.ini_options]
+pythonpath = ["software/source"]
+testpaths = ["software/source/tests"]
+asyncio_mode = "strict"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

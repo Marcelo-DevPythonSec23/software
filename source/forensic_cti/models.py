@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Integer, JSON, String, UniqueConstraint
+from sqlalchemy import Column, DateTime, Index, Integer, JSON, String, UniqueConstraint
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -9,11 +9,19 @@ Base = declarative_base()
 
 class EventRecord(Base):
     __tablename__ = "events"
-    __table_args__ = (UniqueConstraint("event_id", name="uq_event_id"),)
+    __table_args__ = (
+        UniqueConstraint("event_id", name="uq_event_id"),
+        # Índices para melhor performance
+        Index("ix_events_timestamp", "timestamp"),
+        Index("ix_events_timestamp_source_ip", "timestamp", "source_ip"),
+        Index("ix_events_timestamp_dest_ip", "timestamp", "destination_ip"),
+        Index("ix_events_source_dest_ip", "source_ip", "destination_ip"),
+        Index("ix_events_event_type_severity", "event_type", "severity"),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     event_id = Column(String(64), nullable=False, unique=True, default=lambda: str(uuid.uuid4()))
-    timestamp = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, index=True)
     source_ip = Column(String(64), nullable=True, index=True)
     destination_ip = Column(String(64), nullable=True, index=True)
     event_type = Column(String(128), nullable=False, index=True)

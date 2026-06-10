@@ -1,5 +1,38 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
-forensic_cti.db
+*.py[cod]
+.Python
+venv/
+.venv/
+env/
+ENV/
+.pytest_cache/
+.coverage
 .env
+.env.local
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.next/
+dist/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Tools
+tools/node_modules/

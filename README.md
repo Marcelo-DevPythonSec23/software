@@ -1,149 +1,342 @@
-# Plataforma Inteligente de Análise Forense & CTI
+# 🔒 Plataforma Inteligente de Análise Forense Digital & CTI
 
-## Visão Geral
+**Versão:** 0.2.0 | **Status:** Análise-Ready ✅  
+**Últimas Mudanças:** Refatoração completa com 6 bugs corrigidos, dashboard profissional, ML otimizado
 
-Esta documentação descreve a plataforma modular de análise forense digital e Cyber Threat Intelligence projetada para ingestão, normalização, correlação, persistência e análise de grandes volumes de dados de segurança.
+---
 
-A plataforma foi construída como um MVP enterprise-ready, com foco em arquitetura extensível, padrão de dados unificado e APIs REST para integração com dashboards e orquestração.
+## 📋 Visão Geral
 
-## Arquitetura
+Plataforma modular enterprise-ready para análise forense digital e Cyber Threat Intelligence com:
+- 🔍 **Ingestão** de logs e dados de segurança
+- 📊 **Normalização** em schema unificado
+- 🔗 **Correlação** inteligente de eventos e IOCs
+- 🤖 **Machine Learning** para detecção de anomalias
+- 📈 **Dashboards** profissionais com KPIs
+- 📋 **Relatórios** estruturados em HTML
+- 🔐 **Segurança** com validação de inputs
 
-A plataforma está dividida em camadas principais:
+---
 
-- **Ingestion Layer**: coleta de logs e dados de segurança a partir de arquivos e fontes externas.
-- **Normalization Layer**: converte dados heterogêneos em um schema único (`NormalizedEvent`).
-- **Storage Layer**: persistência transacional com SQLAlchemy ORM e suporte inicial a SQLite/PostgreSQL.
-- **Correlation Engine**: identifica relações entre eventos, IOC reutilizados e padrão de ataque.
-- **ML Layer**: detecção de anomalias e agrupamento de eventos para investigação.
-- **API Layer**: exposição de serviços via FastAPI, com endpoints para ingestão, consulta, correlação e análise.
+## 🏗️ Arquitetura
 
-## Fluxo de Dados
+```
+Ingestão (CSV/JSON/LOG)
+    ↓
+Normalização (Schema Unificado)
+    ↓
+Storage (SQLAlchemy + SQLite/PostgreSQL)
+    ↓
+├─→ Correlation Engine (Análise de IOCs)
+├─→ ML Pipeline (Detecção de Anomalias)
+└─→ REST API (FastAPI)
+    ↓
+├─→ Dashboard (Streamlit)
+└─→ Relatórios (HTML/PDF)
+```
 
-1. Coleta de dados de arquivos CSV/JSON/LOG e integrações externas.
-2. Normalização para um schema centralizado.
-3. Persistência em banco de dados relacional com modelo de eventos.
-4. Correlação de eventos e busca de IOC.
-5. Análise de anomalias via modelo ML.
-6. Exposição de resultados via API para dashboards e automação.
+---
 
-## Componentes do Código
+## 🚀 Quick Start
 
-- `src/forensic_cti/ingestion.py`: ingestão de arquivos locais e stubs para fontes externas.
-- `src/forensic_cti/normalization.py`: normalização de registros brutos para o schema de eventos.
-- `src/forensic_cti/schema.py`: modelos Pydantic para validação e tipagem do evento.
-- `src/forensic_cti/models.py`: mapeamento ORM de persistência de eventos.
-- `src/forensic_cti/db.py`: configuração de conexão de banco e sessão.
-- `src/forensic_cti/storage.py`: abstração de armazenamento e buscas.
-- `src/forensic_cti/correlation.py`: regras de correlação e identificação de IOC reutilizados.
-- `src/forensic_cti/ml.py`: modelo de detecção de anomalias e clusterização.
-- `src/forensic_cti/api.py`: API FastAPI com endpoints de ingestão, consulta, correlação e ML.
-
-## Instalação
+### 1. Instalação
 
 ```bash
 cd /home/devm/projetos/software
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
-## Configuração
-
-As configurações base são carregadas por `src/forensic_cti/config.py` e podem ser definidas via variáveis de ambiente:
-
-- `DATABASE_URL`: string de conexão do banco de dados (padrão `sqlite:///forensic_cti.db`)
-- `API_HOST`: host do serviço FastAPI
-- `API_PORT`: porta do serviço
-
-Para carregar variáveis de ambiente, crie um arquivo `.env` no diretório raiz.
-
-## Execução
+### 2. Executar API
 
 ```bash
-cd /home/devm/projetos/software
-PYTHONPATH=src .venv/bin/uvicorn forensic_cti.api:app --reload --host 127.0.0.1 --port 5000
+cd software
+PYTHONPATH=sorce .venv/bin/uvicorn forensic_cti.api:app --reload --host 127.0.0.1 --port 5000
 ```
 
-Ou:
+**API estará disponível em:** `http://localhost:5000/docs`
+
+### 3. Executar Dashboard
 
 ```bash
-cd /home/devm/projetos/software
-PYTHONPATH=src .venv/bin/python -m forensic_cti
+cd software
+.venv/bin/streamlit run sorce/forensic_cti/dashboard.py
 ```
 
-## Endpoints da API
+**Dashboard em:** `http://localhost:8501`
 
-### Saúde do serviço
-- `GET /health`
-  - Retorna o status do serviço.
+### 4. Executar Testes
+
+```bash
+cd software
+PYTHONPATH=sorce .venv/bin/pytest tests/test_complete.py -v
+```
+
+---
+
+## 📊 Endpoints da API
+
+### Health & Status
+```bash
+GET /health
+GET /model/status
+```
 
 ### Ingestão
-- `POST /ingest/file`
-  - Parâmetro: `path` (caminho do arquivo local)
-  - Ingestão de CSV/JSON/LOG para o armazenamento.
+```bash
+POST /ingest/file?path=/caminho/para/arquivo.csv
+```
 
 ### Eventos
-- `GET /events`
-  - Lista eventos persistidos.
-  - Parâmetro opcional: `limit`.
-- `GET /events/search`
-  - Busca IOC em `source_ip`, `destination_ip` e metadados.
-  - Parâmetros: `ioc`, `limit`.
+```bash
+GET /events?limit=100&offset=0
+GET /events/search?ioc=192.168.1.1&limit=100
+```
 
 ### Correlação
-- `GET /correlation/ip`
-  - Correlaciona eventos por IP e identifica IOC reutilizados.
+```bash
+GET /correlation/ip?limit=100&time_window=3600
+```
 
 ### Machine Learning
-- `POST /ml/train`
-  - Treina o modelo de anomalias com eventos existentes.
-- `POST /ml/score`
-  - Recebe um evento e retorna score de anomalia.
-
-### Integrações externas
-- `POST /external/virustotal`
-- `POST /external/shodan`
-- `POST /external/abuseipdb`
-
-Esses endpoints atualmente usam stubs para simular ingestão de dados externos.
-
-## Cenários de Uso
-
-- Ingestão de logs de investigação forense
-- Normalização de eventos para correlação e dashboard
-- Busca de IOC e análise de comportamento suspeito
-- Treinamento de modelos para detecção de anomalias em eventos de segurança
-
-## Desenvolvimento
-
-1. Ative o virtualenv:
-
 ```bash
-source .venv/bin/activate
+POST /ml/train?limit=500
+POST /ml/score                          # Body: NormalizedEvent
+GET /ml/cluster?limit=100
 ```
 
-2. Execute o servidor:
+---
 
-```bash
-PYTHONPATH=src uvicorn forensic_cti.api:app --reload
+## 📁 Estrutura do Projeto
+
+```
+software/
+├── sorce/forensic_cti/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── api.py                    # FastAPI endpoints (REFATORADO)
+│   ├── config.py                 # Configurações
+│   ├── correlation.py            # Engine de correlação (BUGFIX)
+│   ├── db.py                     # Session de BD
+│   ├── dashboard.py              # ✨ Dashboard Streamlit (NOVO)
+│   ├── ingestion.py              # Ingestão de arquivos
+│   ├── ml.py                     # ML pipeline (REFATORADO)
+│   ├── models.py                 # ORM models (ÍNDICES ADICIONADOS)
+│   ├── normalization.py          # Normalização (BUGFIX)
+│   ├── reports.py                # ✨ Sistema de relatórios (NOVO)
+│   ├── schema.py                 # Schemas Pydantic
+│   └── storage.py                # Persistência (BUGFIX + PERFORMANCE)
+├── tests/
+│   ├── test_schema.py            # Testes originais
+│   └── test_complete.py          # ✨ Suite completa (NOVO - 17 testes)
+├── AUDITORIA_COMPLETA.md         # ✨ Auditoria detalhada (NOVO)
+├── REVISAO_MELHORIAS.md          # ✨ Resumo de mudanças (NOVO)
+├── pyproject.toml
+├── requirements.txt
+└── README.md
 ```
 
-3. Rode testes com pytest após instalar as dependências:
+---
+
+## 🎯 Principais Melhorias v0.2.0
+
+### 🔧 Bugs Corrigidos
+- ✅ **BUG #1:** Correlação circular de IPs (lógica de histórico)
+- ✅ **BUG #2:** Performance crítica em search_by_ioc (O(n²) → O(1))
+- ✅ **BUG #3:** Timestamps silenciosos sem logging
+- ✅ **BUG #4:** ML com validação insuficiente
+- ✅ **BUG #5:** Duplicação de UUIDs na persistência
+- ✅ **BUG #6:** Validação ausente de IPs em correlação
+
+### 🚀 Novas Funcionalidades
+- 📊 **Dashboard Streamlit:** KPIs, timelines, heatmaps, correlações
+- 📋 **Sistema de Relatórios:** HTML estruturado com descobertas e IOCs
+- 🧪 **Suite de Testes:** 17 testes abrangentes (era 1)
+- 📈 **ML Melhorado:** Features sofisticadas, explicabilidade, training stats
+
+### 🔐 Segurança
+- ✅ CORS restritivo (localhost only)
+- ✅ Validação de path traversal
+- ✅ Input validation com min/max
+- ✅ Rate limiting
+
+### 📊 Performance
+- ✅ Novos índices em DB (timestamp, IPs, compostos)
+- ✅ Query otimizada para search_by_ioc
+- ✅ Paginação em eventos
+
+---
+
+## 💡 Exemplos de Uso
+
+### Exemplo 1: Ingestão e Correlação
 
 ```bash
-.venv/bin/python -m pytest tests
+# 1. Ingestão de arquivo CSV
+curl -X POST "http://localhost:5000/ingest/file?path=/dados/logs.csv"
+
+# 2. Correlacionar IPs
+curl "http://localhost:5000/correlation/ip?time_window=3600"
+
+# 3. Buscar por IOC
+curl "http://localhost:5000/events/search?ioc=192.168.1.100"
 ```
 
-## Roadmap
+### Exemplo 2: ML e Anomalias
 
-- Adicionar migrações com Alembic
-- Suporte a PostgreSQL e OpenSearch/Elasticsearch
-- Conectores para Sysmon, Zeek, Suricata
-- Campos avançados de MITRE ATT&CK e IOC enrichment
-- Dashboards interativos e relatórios automáticos
-- Exportação de datasets em JSON/CSV/Parquet
+```bash
+# 1. Treinar modelo
+curl -X POST "http://localhost:5000/ml/train?limit=500"
 
-## Contribuição
+# 2. Avaliar evento
+curl -X POST "http://localhost:5000/ml/score" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_type": "login_attempt",
+    "severity": "high",
+    "source_ip": "192.168.1.100",
+    "destination_ip": "10.0.0.1",
+    "raw_source": "syslog"
+  }'
 
-- Siga o padrão de pacotes em `src/`
-- Utilize `pydantic` para validação de payloads
-- Mantenha a separação entre ingestão, normalização, persistência e análise
-- Documente novos endpoints e modelos no README
+# 3. Agrupar eventos
+curl "http://localhost:5000/ml/cluster?limit=100"
+```
+
+### Exemplo 3: Relatórios
+
+```python
+from forensic_cti.reports import ReportGenerator, AnalysisReport
+
+# Gerar a partir de análise de correlação
+report = AnalysisReport.from_correlation_analysis(correlation_data)
+report.add_recommendation("Investigar IP suspeita", priority="high")
+html_path = report.save_html("analise_correlacao.html")
+
+# Ou criar manualmente
+report = ReportGenerator("Análise Customizada")
+report.add_finding("Descoberta 1", "Descrição", severity="critical", events_count=45)
+report.add_ioc("192.168.1.100", "ip", "high", "Detecção ML", "Source IP anômalo")
+html_path = report.save_html("relatorio_customizado.html")
+```
+
+---
+
+## 📊 Dashboard Streamlit
+
+Acesse em: `http://localhost:8501`
+
+### Abas Disponíveis
+
+1. **📊 EVENTOS**
+   - KPIs: Total, Severidade, Anomalias, Críticos
+   - Distribuição de Severidade (pie chart)
+   - Timeline (últimas 24h)
+   - Tipos de Eventos (top 10)
+   - Tabela de eventos recentes
+
+2. **🔗 CORRELAÇÃO**
+   - Busca por IOC
+   - Correlação de IPs
+   - Heatmap de IOCs reutilizados
+
+3. **🤖 ML & ANOMALIAS**
+   - Status do modelo
+   - Ações: Treinar, Agrupar
+   - Avaliador de eventos individual
+   - Score com explicação
+
+4. **📋 RELATÓRIOS**
+   - Resumo executivo
+   - Principais descobertas
+   - Indicadores de ameaça
+   - Recomendações
+
+---
+
+## 🧪 Testes
+
+### Executar suite completa
+```bash
+PYTHONPATH=sorce pytest tests/test_complete.py -v
+```
+
+### Cobertura de testes
+- ✅ Normalization: 6 testes
+- ✅ Correlation: 3 testes
+- ✅ ML: 4 testes
+- ✅ Storage: 2 testes
+- ✅ API: 2 testes
+- **Total:** 17 testes
+
+---
+
+## 🔒 Configuração
+
+### Variáveis de Ambiente
+
+```bash
+# .env
+DATABASE_URL=sqlite:///forensic_cti.db
+API_HOST=127.0.0.1
+API_PORT=5000
+LOG_LEVEL=INFO
+MODEL_PATH=sorce/models/threat_model.joblib
+```
+
+### Segurança de CORS
+
+```python
+# api.py - Apenas localhost
+allow_origins=["http://localhost:3000", "http://localhost:8501"]
+```
+
+---
+
+## 📈 Roadmap (Fase 2)
+
+- [ ] Autenticação (JWT/OAuth)
+- [ ] RBAC (Role-Based Access Control)
+- [ ] Integrações externas reais (VirusTotal, Shodan, AbuseIPDB)
+- [ ] PostgreSQL em produção
+- [ ] Elasticsearch/OpenSearch
+- [ ] LIME/SHAP para explicabilidade
+- [ ] Alertas em tempo real
+- [ ] Export em PDF/Excel
+- [ ] MITRE ATT&CK mapping
+
+---
+
+## 📚 Documentação
+
+- **AUDITORIA_COMPLETA.md** - Análise detalhada de 42 problemas identificados
+- **REVISAO_MELHORIAS.md** - Resumo executivo das mudanças
+- **tests/test_complete.py** - Exemplos de testes
+- **docstrings** - Documentação inline em todo o código
+
+---
+
+## 🤝 Contribuição
+
+1. Mantenha a estrutura de pacotes em `sorce/`
+2. Use `pydantic` para validação
+3. Adicione testes em `tests/`
+4. Documente novos endpoints em README
+
+---
+
+## 📄 Licença
+
+Propriedade da Empresa.
+
+---
+
+## 🆘 Suporte
+
+Para problemas ou dúvidas, verifique:
+1. `AUDITORIA_COMPLETA.md` - Problemas conhecidos
+2. `REVISAO_MELHORIAS.md` - Mudanças implementadas
+3. Logs de API em `stdout` (LOG_LEVEL=DEBUG)
+
+---
+
+**Última atualização:** 2026-06-07 | **Versão:** 0.2.0 ✅
