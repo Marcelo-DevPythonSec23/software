@@ -40,14 +40,14 @@ dev = [
 ]
 
 [tool.setuptools]
-package-dir = {"" = "software/source"}
+package-dir = {"" = "software/backend"}
 
 [tool.setuptools.packages.find]
-where = ["software/source"]
+where = ["software/backend"]
 
 [tool.pytest.ini_options]
-pythonpath = ["software/source"]
-testpaths = ["software/source/tests"]
+pythonpath = ["software/backend"]
+testpaths = ["software/backend/tests"]
 asyncio_mode = "strict"
 
 [build-system]
